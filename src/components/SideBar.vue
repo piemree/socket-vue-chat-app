@@ -60,7 +60,6 @@
 </template>
 
 <script>
-import { uuid } from "uuidv4";
 import ContactModal from "./ContactModal";
 import ConversationModal from "./ConversationModal";
 export default {
@@ -70,7 +69,7 @@ export default {
   },
   data() {
     return {
-      id: uuid(),
+
       tabIndex: 1,
       showModel: false,
       activeIndex: 0,
@@ -83,6 +82,9 @@ export default {
     conversations() {
       return this.$store.getters.GET_ALL_CONVERSATIONS;
     },
+    id(){
+      return this.$store.getters.GET_ID
+    }
   },
   methods: {
     displayNames(c) {

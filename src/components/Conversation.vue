@@ -2,7 +2,7 @@
   <main class="d-flex flex-column justify-content-end flex-grow-1 ">
     <section class="p-3   flex-grow-1 d-flex flex-column overflow-auto ">
       <div
-        v-for="(item, idx) in messages"
+        v-for="(item, idx) in conversation.messages"
         :key="idx"
         :class="
           `align-self-${
@@ -22,13 +22,13 @@
             } text-white rounded-3 m-0 p-0 py-1 px-2  `
           "
         >
-          {{ item.message }}
+          {{ item.text }}
         </p>
       </div>
     </section>
     <section class="bg-warning d-flex mt-3" style="min-height:3rem">
-      <input class="m-0 flex-grow-1 rounded-0" type="text" />
-      <button class="btn btn-primary m-0">send</button>
+      <input v-model="text" class="m-0 flex-grow-1 rounded-0" type="text" />
+      <button @click="sendMessage" class="btn btn-primary m-0">send</button>
     </section>
   </main>
 </template>
@@ -37,25 +37,26 @@
 export default {
   data() {
     return {
-      myid: "5",
-      messages: [
-        { id: "5", message: "its from me" },
-        { id: "dc7469bd-336c-4652-b84b-1", message: "its not from me" },
-        { id: "dc7469bd-336c-4652-b84b-1", message: "its not from me" },
-        { id: "dc7469bd-336c-4652-b84b-1", message: "its not from me" },
-        { id: "dc7469bd-336c-4652-b84b-1", message: "its not from me" ,name:"Adam"},
-        { id: "dc7469bd-336c-4652-b84b-1", message: "its not from me" },
-        { id: "dc7469bd-336c-4652-b84b-1", message: "its not from me" },
-        { id: "dc7469bd-336c-4652-b84b-1", message: "its not from me" ,name:"Jhon"},
-        { id: "dc7469bd-336c-4652-b84b-1", message: "its not from me" },
-        { id: "dc7469bd-336c-4652-b84b-1", message: "its not from me" },
-        { id: "dc7469bd-336c-4652-b84b-1", message: "its not from me" },
-        { id: "dc7469bd-336c-4652-b84b-1", message: "its not from me" },
-        { id: "dc7469bd-336c-4652-b84b-1", message: "its not from me" },
-        { id: "dc7469bd-336c-4652-b84b-1", message: "its not from me" },
-      ],
+      text: "",
     };
+  },
+  methods: {
+    sendMessage() {
+      this.$store.dispatch("addMessageToConversation", {
+        recipients: this.conversation.recipients,
+        text: this.text,
+      });
+
+      this.text = "";
+    },
+  },
+  computed: {
+    conversation() {
+      return this.$store.getters.GET_CURRENT_CONVERSATION;
+    },
+    myid() {
+      return this.$store.getters.GET_ID;
+    },
   },
 };
 </script>
-
