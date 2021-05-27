@@ -1,11 +1,15 @@
 <template>
-  <main class="d-flex flex-column justify-content-end flex-grow-1 ">
-    <section class="p-3   flex-grow-1 d-flex flex-column overflow-auto ">
+  <main
+    v-if="conversation.recipients !== undefined"
+    class="d-flex flex-column justify-content-end flex-grow-1 "
+  >
+    <section class="p-3    d-flex flex-column overflow-auto ">
       <div
         v-for="(item, idx) in conversation.messages"
         :key="idx"
+        :id="item.id"
         :class="
-          `align-self-${
+          `justify-content-center align-self-${
             item.id == myid ? 'end' : 'start'
           } my-2 d-flex flex-column align-items-${
             item.id == myid ? 'end' : 'start'
@@ -25,14 +29,21 @@
           {{ item.text }}
         </p>
       </div>
+      <span ref="scroll" id="star-here"></span>
     </section>
     <section class="bg-warning d-flex mt-3" style="min-height:3rem">
       <input v-model="text" class="m-0 flex-grow-1 rounded-0" type="text" />
       <button @click="sendMessage" class="btn btn-primary m-0">send</button>
     </section>
   </main>
-</template>
 
+  <div
+    v-else
+    class="h-100 w-100 d-flex justify-content-center align-items-center"
+  >
+    <h1>WELCOME TO LİTTLE CHAT APP</h1>
+  </div>
+</template>
 <script>
 export default {
   data() {
@@ -42,12 +53,21 @@ export default {
   },
   methods: {
     sendMessage() {
+      if (this.text === "") return;
+
       this.$store.dispatch("addMessageToConversation", {
         recipients: this.conversation.recipients,
         text: this.text,
       });
 
       this.text = "";
+    },
+    scrollToElement() {
+    
+      
+      
+        this.$refs.scroll.scrollIntoView({ behavior: "smooth" });
+     
     },
   },
   computed: {
@@ -56,6 +76,13 @@ export default {
     },
     myid() {
       return this.$store.getters.GET_ID;
+    },
+  },
+  watch: {
+    conversation() {
+      setTimeout(() => {
+        this.scrollToElement();
+      }, 50);
     },
   },
 };

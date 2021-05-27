@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { uuid } from "uuidv4";
+import uuidv4 from "uuid/v4";
+import { io } from "socket.io-client";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -8,7 +9,7 @@ export default new Vuex.Store({
     contacts: JSON.parse(localStorage.getItem("contacts")) || [],
     conversations: JSON.parse(localStorage.getItem("conversations")) || [],
     currentConversation: {},
-    id: uuid(),
+    id: uuidv4(),
   },
   mutations: {
     ADD_CONTACT(state, contact) {
@@ -81,7 +82,19 @@ export default new Vuex.Store({
         }
       });
     },
+    
+    Initializer({ state }) {
+      console.log(state.id);
+  
+      io("http://localhost:5000", {
+        reconnectionDelayMax: 10000,
+        query: {
+          id: state.id,
+        },
+      });
+    },
   },
+ 
 });
 
 function areArraysEqual(arr1, arr2) {
