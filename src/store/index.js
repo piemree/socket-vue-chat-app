@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import uuidv4 from "uuid/v4";
-import { io } from "socket.io-client";
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -10,6 +10,7 @@ export default new Vuex.Store({
     conversations: JSON.parse(localStorage.getItem("conversations")) || [],
     currentConversation: {},
     id: uuidv4(),
+    socket: null,
   },
   mutations: {
     ADD_CONTACT(state, contact) {
@@ -19,7 +20,6 @@ export default new Vuex.Store({
       state.conversations.push(conversation);
     },
     SET_CURRENT_CONVERSATION(state, conversation) {
-      //  Object.assign(state.currentConversation, conversation);
       state.currentConversation = { ...conversation };
     },
 
@@ -28,6 +28,9 @@ export default new Vuex.Store({
       current.messages.push(newMessage);
 
       state.currentConversation = { ...current };
+    },
+    SET_SOCKET(state, socket) {
+      state.socket = socket;
     },
   },
 
@@ -40,6 +43,9 @@ export default new Vuex.Store({
     },
     GET_CURRENT_CONVERSATION: (state) => {
       return state.currentConversation;
+    },
+    GET_SOCKET(state) {
+      return state.socket;
     },
     GET_ID(state) {
       return state.id;
@@ -55,12 +61,12 @@ export default new Vuex.Store({
       commit("ADD_CONTACT", newContact);
     },
 
-    newConversation({ commit, state }, conversation) {
+    newConversation({ commit, state }, {conversation,messages}) {
       let recipients = conversation.map((rec) => {
         return rec.id;
       });
 
-      const modifiedConversation = { conversation, recipients, messages: [] };
+      const modifiedConversation = { conversation, recipients, messages };
 
       localStorage.setItem(
         "conversations",
@@ -73,31 +79,31 @@ export default new Vuex.Store({
       commit("SET_CURRENT_CONVERSATION", conversation);
     },
 
-    addMessageToConversation({ commit, state }, { recipients, text }) {
-      const newMessage = { id: state.id, text };
+    addMessageToConversation({ commit, state,dispatch }, { recipients, text ,sender}) {
+    
+      const newMessage = { id:sender, text };
 
       state.conversations.map((conversation, idx) => {
         if (areArraysEqual(conversation.recipients, recipients)) {
           commit("ADD_MESSAGE_TO_CONVERSATION", { newMessage, idx });
+        }else{
+
+          const newConversation=[];
+
+          recipients.map((recipient) => {
+              let conversation ={id:recipient,name:""};
+              newConversation.push(conversation);
+          })
+              console.log(newConversation);
+          dispatch.newConversation({conversation:newConversation,messages:[newMessage]})
         }
       });
     },
-    
-    Initializer({ state }) {
-      console.log(state.id);
-  
-      io("http://localhost:5000", {
-        reconnectionDelayMax: 10000,
-        query: {
-          id: state.id,
-        },
-      });
-    },
   },
- 
 });
 
 function areArraysEqual(arr1, arr2) {
+  console.log("here")
   if (arr1.length !== arr2.length) return false;
 
   return arr1.every((item1) => {

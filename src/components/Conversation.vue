@@ -31,10 +31,10 @@
       </div>
       <span ref="scroll" id="star-here"></span>
     </section>
-    <section class="bg-warning d-flex mt-3" style="min-height:3rem">
+    <form @submit.prevent="sendMessage" class="bg-warning d-flex mt-3" style="min-height:3rem">
       <input v-model="text" class="m-0 flex-grow-1 rounded-0" type="text" />
-      <button @click="sendMessage" class="btn btn-primary m-0">send</button>
-    </section>
+      <button type="submit" class="btn btn-primary m-0">send</button>
+    </form>
   </main>
 
   <div
@@ -55,19 +55,21 @@ export default {
     sendMessage() {
       if (this.text === "") return;
 
-      this.$store.dispatch("addMessageToConversation", {
+      this.$store.state.socket.emit("send-message", {
         recipients: this.conversation.recipients,
         text: this.text,
       });
 
+       this.$store.dispatch("addMessageToConversation", {
+        recipients: this.conversation.recipients,
+        text: this.text,
+        sender:this.$store.getters.GET_ID
+      }); 
+
       this.text = "";
     },
     scrollToElement() {
-    
-      
-      
-        this.$refs.scroll.scrollIntoView({ behavior: "smooth" });
-     
+      this.$refs.scroll.scrollIntoView({ behavior: "smooth" });
     },
   },
   computed: {

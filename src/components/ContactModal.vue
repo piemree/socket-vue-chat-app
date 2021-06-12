@@ -20,9 +20,7 @@ export default {
   },
   methods: {
     createContact(){
-
       this.$store.dispatch("newContact",{id: this.id, name: this.name})
-      console.log(JSON.parse(localStorage.getItem("contacts")))
     }
   },
 };

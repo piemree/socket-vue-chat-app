@@ -4,10 +4,28 @@
   </div>
 </template>
 <script>
+
 export default {
-  created() {
-    this.$store.dispatch("Initializer");
+  /* created() {
+    this.$store.commit("SET_SOCKET", this.connect());
   },
+  methods: {
+    connect() {
+      const newSocket = io("http://localhost:5000", { query: { id: this.id } });
+      return newSocket;
+    },
+  },
+  computed: {
+    id() {
+      return this.$store.getters.GET_ID;
+    },
+  },
+  watch: {
+    id() {
+      this.$store.state.socket.close();
+      this.$store.commit("SET_SOCKET", this.connect());
+    },
+  }, */
 };
 </script>
 <style>
