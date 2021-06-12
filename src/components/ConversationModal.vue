@@ -24,11 +24,11 @@ export default {
 
   methods: {
     createConversation() {
-      const selected = this.contacts.filter((item) => {
+      const conversation = this.contacts.filter((item) => {
         return item.select === true;
       });
 
-      this.$store.dispatch("newConversation",selected)
+      this.$store.dispatch("newConversation",{conversation,messages:[]})
     },
   },
   computed: {

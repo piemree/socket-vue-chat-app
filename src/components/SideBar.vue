@@ -69,7 +69,6 @@ export default {
   },
   data() {
     return {
-
       tabIndex: 1,
       showModel: false,
       activeIndex: 0,
@@ -82,16 +81,14 @@ export default {
     conversations() {
       return this.$store.getters.GET_ALL_CONVERSATIONS;
     },
-    id(){
-      return this.$store.getters.GET_ID
-    }
+    id() {
+      return this.$store.getters.GET_ID;
+    },
   },
   methods: {
     displayNames(c) {
       return c.conversation
-        .map((con) => {
-          return con.name;
-        })
+        .map((con) => (con.name ? con.name : con.id))
         .join(", ");
     },
     active(e, conversation) {

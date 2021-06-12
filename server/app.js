@@ -1,27 +1,25 @@
-const io = require("socket.io")(5000, {
-  cors: {
-    origin: "*",
-  },
-});
+'use strict'
 
-io.on("connection", (socket) => {
-  const id = socket.handshake.query.id;
+const path = require('path')
+const AutoLoad = require('fastify-autoload')
 
-  socket.join(id);
+module.exports = async function (fastify, opts) {
+  // Place here your custom code!
 
-  socket.on("send-message", ({ recipients, text }) => {
-    recipients.forEach((recipient) => {
-      const newRecipients = recipients.filter((r) => r !== recipient);
+  // Do not touch the following lines
 
-      newRecipients.push(id);
+  // This loads all plugins defined in plugins
+  // those should be support plugins that are reused
+  // through your application
+  fastify.register(AutoLoad, {
+    dir: path.join(__dirname, 'plugins'),
+    options: Object.assign({}, opts)
+  })
 
-      socket.broadcast
-        .to(recipient)
-        .emit("receive-message", {
-          recipients: newRecipients,
-          senders: id,
-          text,
-        });
-    });
-  });
-});
+  // This loads all plugins defined in routes
+  // define your routes in one of these
+  fastify.register(AutoLoad, {
+    dir: path.join(__dirname, 'routes'),
+    options: Object.assign({}, opts)
+  })
+}
